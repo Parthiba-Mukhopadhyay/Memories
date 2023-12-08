@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const RootLayout = () => {
-  return (
-    <div>
-      Hello
-    </div>
-  )
-}
+  return <div>RootLayout</div>;
+};
 
-export default RootLayout
+export default RootLayout;
