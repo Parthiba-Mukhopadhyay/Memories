@@ -14,6 +14,9 @@ import { Input } from "@/components/ui/input";
 
 import { z } from "zod";
 import { SignupValidation } from "@/lib/validation";
+import Loader from "@/components/shared/Loader";
+import { Link } from "react-router-dom";
+import { createUserAccount } from "@/lib/appwrite/api";
 
 const signUpForm = () => {
   // 1. Define your form.
@@ -28,38 +31,87 @@ const signUpForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof SignupValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof SignupValidation>) {
+    //create user
+    const newUser=await createUserAccount(values);
+    console.log(newUser)
   }
+ 
+  const isLoading=false;
 
   return (
     <Form {...form}>
       <div className="flex flex-col items-center justify-center flex-center sm:w-420">
-        <img src="/assets/images/logo.svg"
-        alt="logo"
-        className="py-5" />
+        <img src="/assets/images/logo.svg" alt="logo" className="" />
+
+        <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Create new account</h2>
+        <p className="text-sm text-light-3 pb-2">Enter your details</p>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 w-full">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input type="text" className="shad-input" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input type="text" className="shad-input" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Id</FormLabel>
+                <FormControl>
+                  <Input type="email" className="shad-input" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" className="shad-input" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="shad-button_primary">
+            {isLoading ? (
+              <div className="flex flex-center gap-2"><Loader/>Loading...</div>
+            ):(
+              <p>Sign Up</p>
+            )}
+          </Button>
+          <p className="text-sm text-center text-light-2">
+            Already have an account?
+              <Link to="/sign-in" className="ml-2 text-primary-500"> Log-in</Link>
+          </p>
+        </form>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="Username" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
     </Form>
   );
 };
